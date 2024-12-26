@@ -29,13 +29,16 @@
     CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeQRCode context:nil options:@{ CIDetectorAccuracy : CIDetectorAccuracyHigh }];
 
     NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image.CGImage]];
-    if (features.count > 0) {
-        CIQRCodeFeature *feature = [features objectAtIndex:0];
-        NSString *qrData = feature.messageString;
-        result(qrData);
-    } else {
-        result(NULL);
-    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (features.count > 0) {
+            CIQRCodeFeature *feature = [features objectAtIndex:0];
+            NSString *qrData = feature.messageString;
+            result(qrData);
+        } else {
+            result(NULL);
+        }
+    });
 }
 
 @end
